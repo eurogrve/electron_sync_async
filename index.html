@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Sync Async Test</title>
+
+    <script>
+        var fs = require('fs');
+        var maxcount = 50000;
+        
+        function async()
+        {
+            var times = maxcount;
+            var count = 0;
+            
+            document.getElementById("btasync").disabled=true;
+            
+            function async_readdir() 
+            {
+                fs.readdir('.', 
+                    function(err,files)  {
+                        count = count + 1;
+                        times = times - 1;
+                        if(times>0) {
+                            async_readdir();
+                        } else {
+                            console.log("complete : " + count);
+                            document.getElementById("btasync").disabled=false;
+                        }
+                    });
+            };
+            
+            async_readdir();
+        }
+        
+        function sync()
+        {
+            var count = 0;
+            var files = [];
+            for(var i=0;i<maxcount;i++) {
+                count = count + 1;
+                files = fs.readdirSync('.');
+            }
+            console.log("complete : " + count);
+        }
+    
+    </script>
+  </head>
+
+  <body>
+    <div id="container">
+        <p>Sync Async Test</p>
+        <img src="gif-load.gif">
+        <div>
+            <button id="btsync"  type="button" onclick="sync();">Sync</button>
+            <button id="btasync" type="button" onclick="async();">Async</button>
+        </div>
+    </div>
+
+  </body>
+</html>
